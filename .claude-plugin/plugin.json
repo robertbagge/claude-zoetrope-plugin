@@ -1,0 +1,9 @@
+{
+  "name": "zoetrope",
+  "description": "Convert screen recordings to high-quality GIF/WebP and resize/convert still images via the zoetrope CLI.",
+  "version": "0.1.0",
+  "author": {
+    "name": "robertbagge"
+  },
+  "repository": "https://github.com/robertbagge/claude-zoetrope-plugin"
+}
