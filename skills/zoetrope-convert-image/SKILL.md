@@ -12,11 +12,9 @@ The CLI accepts these still-image inputs: `png`, `jpg`, `jpeg`, `webp`. Output f
 
 ## Prerequisites
 
-Before the first invocation, run `command -v zoetrope`. If it returns non-zero, stop and tell the user:
+Before the first invocation, run `${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/verify-cli.sh`. If it exits non-zero, surface its stderr to the user verbatim and stop.
 
-> `zoetrope` is not on PATH. Install it with `brew install robertbagge/tap/zoetrope` (recommended), or from a local checkout with `cargo install --path crates/zoetrope-cli`.
-
-Do not attempt to install it yourself. Do not synthesise a fake output file.
+Do not attempt to install `zoetrope` yourself. Do not synthesise a fake output file.
 
 ## Picking flags from the ask
 
@@ -60,27 +58,29 @@ Video-only flags (`--fps`, `--speed`, `--playback`, `--start`, `--end`, `--durat
 
 ## Worked examples
 
+Every invocation goes through the wrapper at `${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/convert-image.sh`. It is a thin pass-through (`exec zoetrope "$@"`), so the argument surface is identical to the CLI.
+
 ```sh
 # PNG → WebP, aspect-preserved at 432 wide
-zoetrope photo.png --width 432 -F webp
+${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/convert-image.sh photo.png --width 432 -F webp
 
 # Exact 432×432 (stretch)
-zoetrope photo.png --width 432 --height 432
+${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/convert-image.sh photo.png --width 432 --height 432
 
 # JPEG → PNG, resized
-zoetrope shot.jpg --width 800 -F png
+${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/convert-image.sh shot.jpg --width 800 -F png
 
 # WebP → JPEG, resized
-zoetrope shot.webp --width 320 -F jpg
+${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/convert-image.sh shot.webp --width 320 -F jpg
 
 # Custom output filename
-zoetrope photo.png --width 600 -o thumb.webp
+${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/convert-image.sh photo.png --width 600 -o thumb.webp
 
 # Batch — collect into ./resized/
-zoetrope *.png --width 600 -F webp --output-dir ./resized/
+${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/convert-image.sh *.png --width 600 -F webp --output-dir ./resized/
 
 # Format-only conversion (no resize)
-zoetrope photo.jpg -F webp
+${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/convert-image.sh photo.jpg -F webp
 ```
 
 ## After running
@@ -89,7 +89,7 @@ Run `ls -lh <output-path>` to confirm the file exists and report its size to the
 
 ## Hard rules
 
-- **Don't invent flags.** The full surface is `zoetrope --help`. If the user asks for something not in the table above, say so.
+- **Don't invent flags.** The full surface is whatever `${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-convert-image/scripts/help.sh` prints. If the user asks for something not in the table above, say so.
 - **Image inputs don't accept video flags.** If the user asks for trim/speed/playback/platform-preset on a still image, push back — those are concepts for video. If the input is actually a video they want animated, hand off to `zoetrope-create-gif`.
 - **GIF output for a still image is single-frame.** If the user wants an animated GIF, the input must be a video — use `zoetrope-create-gif` instead.
 - **Never fake output.** If `zoetrope` isn't installed or the conversion fails, say so. Don't pretend to have produced a file.
