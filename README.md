@@ -75,11 +75,18 @@ The plugin assumes `zoetrope` is on PATH and lets the OS surface the failure whe
 claude-zoetrope-plugin/
 ├── .claude-plugin/
 │   └── plugin.json
+├── scripts/
+│   ├── verify-cli.sh         (shared by both skills)
+│   └── help.sh               (shared by both skills)
 ├── skills/
 │   ├── zoetrope-create-gif/
-│   │   └── SKILL.md
+│   │   ├── SKILL.md
+│   │   └── scripts/
+│   │       └── generate-gif.sh
 │   └── zoetrope-convert-image/
-│       └── SKILL.md
+│       ├── SKILL.md
+│       └── scripts/
+│           └── convert-image.sh
 ├── README.md
 ├── LICENSE
 ├── CHANGELOG.md

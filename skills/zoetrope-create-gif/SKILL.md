@@ -6,13 +6,13 @@ argument-hint: "[input-path]"
 
 # zoetrope-create-gif
 
-Thin wrapper around the `zoetrope` CLI for video → animated output. Your job is to turn the user's natural-language ask into the right `zoetrope` invocation, run it, and report the resulting file size.
+Thin wrapper around the `zoetrope` CLI for video → animated output. Your job is to turn the user's natural-language ask into the right invocation of `${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh` (a pass-through to `zoetrope`), run it, and report the resulting file size.
 
 The CLI accepts these video inputs: `mov`, `mp4`, `webm`, `mkv`, `avi`. Output is GIF by default, or WebP if the user wants a smaller file (`-F webp` is 2–5× smaller than GIF and still animated for video input).
 
 ## Prerequisites
 
-Before the first invocation, run `${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/verify-cli.sh`. If it exits non-zero, surface its stderr to the user verbatim and stop.
+Before the first invocation, run `${CLAUDE_PLUGIN_ROOT}/scripts/verify-cli.sh`. If it exits non-zero, surface its stderr to the user verbatim and stop.
 
 Do not attempt to install `zoetrope` yourself. Do not synthesise a fake output file.
 
@@ -56,7 +56,7 @@ Default quality is `medium` (960px, 12fps) — fine for GitHub PRs and docs.
 - `--end` and `--duration` are mutually exclusive. Pick one.
 - `--for <platform>` locks format to GIF and enforces a size cap. Explicit `--fps`, `--width`, or `--max-size` still override the preset values when set.
 - Only add `--force` when the user explicitly says "overwrite" or has acknowledged an existing file.
-- Don't combine still-image flags (none exist that would conflict here, but never invent flags — the help text is the full surface).
+- Don't combine still-image flags (none exist that would conflict here, but never invent flags — see the Hard rules below for the canonical full-surface reference).
 
 ## Reference
 
@@ -87,38 +87,38 @@ Default quality is `medium` (960px, 12fps) — fine for GitHub PRs and docs.
 
 ## Worked examples
 
-Every invocation goes through the wrapper at `${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh`. It is a thin pass-through (`exec zoetrope "$@"`), so the argument surface is identical to the CLI.
+Every invocation goes through the wrapper at `${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh`. It is a thin pass-through (`exec zoetrope "$@"`), so the argument surface is identical to the CLI.
 
 ```sh
 # Default: medium quality GIF next to input
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh demo.mov
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh demo.mov
 
 # Slack-ready, auto-fit
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh demo.mov --for slack
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh demo.mov --for slack
 
 # GitHub PR clip, trimmed
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh demo.mov --for github --start 2s --duration 8s
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh demo.mov --for github --start 2s --duration 8s
 
 # Smaller animated WebP
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh demo.mov -F webp -q high
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh demo.mov -F webp -q high
 
 # Demo reel
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh demo.mov -q ultra -F webp
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh demo.mov -q ultra -F webp
 
 # Boomerang under 2MB
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh demo.mov --playback boomerang --max-size 2mb
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh demo.mov --playback boomerang --max-size 2mb
 
 # 2× speedup, custom width
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh demo.mov --speed 2 --width 720
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh demo.mov --speed 2 --width 720
 
 # Reverse, custom output filename
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh demo.mov --playback reverse -o demo-reverse.gif
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh demo.mov --playback reverse -o demo-reverse.gif
 
 # Batch — collect into ./gifs/
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh *.mov --output-dir ./gifs/
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh *.mov --output-dir ./gifs/
 
 # Batch + platform preset
-${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/generate-gif.sh *.mov --for slack --output-dir ./slack/
+${CLAUDE_SKILL_DIR}/scripts/generate-gif.sh *.mov --for slack --output-dir ./slack/
 ```
 
 ## After running
@@ -127,7 +127,7 @@ Run `ls -lh <output-path>` to confirm the file exists and report its size to the
 
 ## Hard rules
 
-- **Don't invent flags.** The full surface is whatever `${CLAUDE_PLUGIN_ROOT}/skills/zoetrope-create-gif/scripts/help.sh` prints. If the user asks for something not in the table above, say so explicitly rather than guessing.
+- **Don't invent flags.** The full surface is whatever `${CLAUDE_PLUGIN_ROOT}/scripts/help.sh` prints. If the user asks for something not in the table above, say so explicitly rather than guessing.
 - **Don't use video-only flags on still images.** `--fps`, `--speed`, `--playback`, `--start`/`--end`/`--duration`, `--for` only apply to video inputs. For still images (png/jpg/jpeg/webp) hand off to the `zoetrope-convert-image` skill.
 - **One-shot tool.** Each invocation produces output or fails. Don't poll, don't background it.
 - **Never fake output.** If `zoetrope` isn't installed or the conversion fails, say so. Don't pretend to have produced a file.
