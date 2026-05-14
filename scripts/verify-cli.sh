@@ -8,10 +8,6 @@ fi
 cat >&2 <<'EOF'
 zoetrope is not on PATH.
 
-Install options:
-  - macOS (Homebrew):  brew install robertbagge/tap/zoetrope
-  - From source:       cargo install --path crates/zoetrope-cli
-
-Do not attempt to install it automatically.
+See https://github.com/robertbagge/zoetrope for installation instructions.
 EOF
 exit 127

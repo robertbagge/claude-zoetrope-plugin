@@ -14,7 +14,7 @@ The CLI accepts these video inputs: `mov`, `mp4`, `webm`, `mkv`, `avi`. Output i
 
 Before the first invocation, run `${CLAUDE_PLUGIN_ROOT}/scripts/verify-cli.sh`. If it exits non-zero, surface its stderr to the user verbatim and stop.
 
-Do not attempt to install `zoetrope` yourself. Do not synthesise a fake output file.
+Do not synthesise a fake output file.
 
 ## Picking flags from the ask
 
