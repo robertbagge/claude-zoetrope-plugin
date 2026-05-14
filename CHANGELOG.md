@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/robertbagge/claude-zoetrope-plugin/compare/v0.2.0...v0.2.1) (2026-05-14)
+
+
+### Bug Fixes
+
+* add script descriptions ([245e68d](https://github.com/robertbagge/claude-zoetrope-plugin/commit/245e68d5439829638734272e425b8f68051e4fdd))
+
 ## [0.2.0](https://github.com/robertbagge/claude-zoetrope-plugin/compare/v0.1.0...v0.2.0) (2026-05-13)
 
 
