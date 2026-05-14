@@ -15,17 +15,9 @@ claude plugin install zoetrope@claude-registry
 
 ### Prerequisite: install the `zoetrope` CLI
 
-The plugin invokes `zoetrope` directly, so the binary must be on PATH.
+The plugin invokes `zoetrope` directly, so the binary must be on PATH. See the [zoetrope repo](https://github.com/robertbagge/zoetrope) for installation instructions.
 
-```bash
-# Recommended (macOS) — pulls ffmpeg as a dependency
-brew install robertbagge/tap/zoetrope
-
-# From source (requires ffmpeg installed separately)
-cargo install --path crates/zoetrope-cli
-```
-
-If the binary is missing when a skill runs, the skill will stop cleanly and print these install instructions rather than guessing or faking output.
+If the binary is missing when a skill runs, the skill will stop cleanly and link to the install instructions rather than guessing or faking output.
 
 ## `/zoetrope:zoetrope-create-gif` — video → animated GIF/WebP
 
@@ -75,11 +67,18 @@ The plugin assumes `zoetrope` is on PATH and lets the OS surface the failure whe
 claude-zoetrope-plugin/
 ├── .claude-plugin/
 │   └── plugin.json
+├── scripts/
+│   ├── verify-cli.sh         (shared by both skills)
+│   └── help.sh               (shared by both skills)
 ├── skills/
 │   ├── zoetrope-create-gif/
-│   │   └── SKILL.md
+│   │   ├── SKILL.md
+│   │   └── scripts/
+│   │       └── generate-gif.sh
 │   └── zoetrope-convert-image/
-│       └── SKILL.md
+│       ├── SKILL.md
+│       └── scripts/
+│           └── convert-image.sh
 ├── README.md
 ├── LICENSE
 ├── CHANGELOG.md
