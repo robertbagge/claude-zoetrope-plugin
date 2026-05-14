@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# This script is used to verify that the zoetrope command is available on the system.
+
 if command -v zoetrope >/dev/null 2>&1; then
   exit 0
 fi
